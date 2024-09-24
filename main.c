@@ -76,14 +76,32 @@ void fill_circle(unsigned pixels[CANVAS_HEIGHT * CANVAS_WIDTH], unsigned canvas_
                 }
 }
 
+void fill_ring(unsigned pixels[CANVAS_HEIGHT * CANVAS_WIDTH], unsigned canvas_height, unsigned canvas_width, int cx, int cy, unsigned r1, unsigned r2, unsigned color)
+{
+    int x1 = cx - r2, y1 = cy - r2;
+    int x2 = cx + r2, y2 = cy + r2;
+
+    for (int y = y1; y < y2; y++)
+        if (y >= 0 && y < canvas_height)
+            for (int x = x1; x < x2; x++)
+                if (x >= 0 && x < canvas_width)
+                {
+                    int dx = cx - x;
+                    int dy = cy - y;
+
+                    int d_sq = dx * dx + dy * dy;
+
+                    if (d_sq > r1 * r1 && d_sq < r2 * r2)
+                        pixels[y * canvas_width + x] = color;
+                }
+}
+
 int main()
 {
     unsigned pixels[CANVAS_HEIGHT * CANVAS_WIDTH];
     char *f_path = "example.ppm";
 
     fill_rect(pixels, CANVAS_HEIGHT, CANVAS_WIDTH, 0, 0, CANVAS_WIDTH - 1, CANVAS_HEIGHT - 1, COLOR_BLACK);
-    fill_rect(pixels, CANVAS_HEIGHT, CANVAS_WIDTH, 150, 150, CANVAS_WIDTH - 151, CANVAS_HEIGHT - 151, COLOR_GREEN);
-    // fill_circle(pixels, CANVAS_HEIGHT, CANVAS_WIDTH, CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 200, COLOR_BLUE);
 
     write_ppm(f_path, pixels, CANVAS_HEIGHT, CANVAS_WIDTH);
 
