@@ -96,13 +96,60 @@ void fill_ring(unsigned pixels[CANVAS_HEIGHT * CANVAS_WIDTH], unsigned canvas_he
                 }
 }
 
+void swap(int *a, int *b)
+{
+    int t = *a;
+    *a = *b;
+    *b = t;
+}
+
+void fill_line(unsigned pixels[CANVAS_HEIGHT * CANVAS_WIDTH], unsigned canvas_height, unsigned canvas_width, int x1, int y1, int x2, int y2, unsigned color)
+{
+    // y = kx + n
+    // k = (y2 - y1) / (x2 - x1)
+
+    int dy = y2 - y1;
+    int dx = x2 - x1;
+    if (x1 > x2)
+    {
+        swap(&x1, &x2);
+        swap(&y1, &y2);
+    }
+
+    if (dx != 0)
+    {
+        for (int x = x1; x <= x2; x++)
+            if (x >= 0 && x < canvas_width)
+            {
+                int current_y = ((double)dy / dx) * (x - x1) + y1;
+                int next_y = ((double)dy / dx) * ((x + 1) - x1) + y1;
+
+                if (current_y > next_y)
+                    swap(&current_y, &next_y);
+
+                for (int y = current_y; y <= next_y; y++)
+                    if (y >= 0 && y <= canvas_height)
+                        pixels[y * canvas_width + x] = color;
+            }
+        return;
+    }
+
+    for (int y = y1; y <= y2; y++)
+        pixels[y * canvas_width + x1] = color;
+}
+
 int main()
 {
     unsigned pixels[CANVAS_HEIGHT * CANVAS_WIDTH];
     char *f_path = "example.ppm";
 
     fill_rect(pixels, CANVAS_HEIGHT, CANVAS_WIDTH, 0, 0, CANVAS_WIDTH - 1, CANVAS_HEIGHT - 1, COLOR_BLACK);
-
+    fill_line(pixels, CANVAS_HEIGHT, CANVAS_WIDTH, 0, 0, CANVAS_WIDTH - 1, CANVAS_HEIGHT - 1, COLOR_RED);
+    fill_line(pixels, CANVAS_HEIGHT, CANVAS_WIDTH, 0, CANVAS_HEIGHT - 1, CANVAS_WIDTH - 1, 0, COLOR_BLUE);
+    fill_line(pixels, CANVAS_HEIGHT, CANVAS_WIDTH, 0, CANVAS_HEIGHT / 2, CANVAS_WIDTH - 1, CANVAS_HEIGHT / 2, COLOR_GREEN);
+    fill_line(pixels, CANVAS_HEIGHT, CANVAS_WIDTH, 0, 0, CANVAS_WIDTH / 4, CANVAS_HEIGHT - 1, COLOR_GREEN);
+    fill_line(pixels, CANVAS_HEIGHT, CANVAS_WIDTH, CANVAS_WIDTH - 1, 0, CANVAS_WIDTH * 3 / 4, CANVAS_HEIGHT - 1, COLOR_GREEN);
+    fill_line(pixels, CANVAS_HEIGHT, CANVAS_WIDTH, CANVAS_WIDTH / 2, 0, CANVAS_WIDTH / 2, CANVAS_HEIGHT - 1, COLOR_GREEN);
     write_ppm(f_path, pixels, CANVAS_HEIGHT, CANVAS_WIDTH);
 
     return 0;
