@@ -140,7 +140,7 @@ void fill_line(unsigned pixels[CANVAS_HEIGHT * CANVAS_WIDTH], unsigned canvas_he
 
 int main()
 {
-    unsigned pixels[CANVAS_HEIGHT * CANVAS_WIDTH];
+    unsigned pixels[CANVAS_HEIGHT * CANVAS_WIDTH] = {COLOR_BLACK};
     char *f_path = "example.ppm";
 
     fill_rect(pixels, CANVAS_HEIGHT, CANVAS_WIDTH, 0, 0, CANVAS_WIDTH - 1, CANVAS_HEIGHT - 1, COLOR_BLACK);
